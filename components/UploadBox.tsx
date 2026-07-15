@@ -6,22 +6,80 @@ import {
   ImageIcon,
   Sparkles,
 } from "lucide-react";
+import {motion} from "framer-motion";
+
+type HistoryItem = {
+  id: number;
+  prompt: string;
+  mode: string;
+  createdAt: string;
+  favorite?:boolean;
+};
 
 type UploadBoxProps = {
   setGeneratedPrompt: React.Dispatch<
     React.SetStateAction<string>
   >;
+  setGeneratedPrompts: React.Dispatch<
+  React.SetStateAction<{
+    Universal: string;
+    ChatGPT: string;
+    Midjourney: string;
+    Flux: string;
+    SDXL: string;
+    Imagen: string;
+  }>
+>;
+    setRecommendedModel: React.Dispatch<
+    React.SetStateAction<string>
+  >;
+    setRecommendReason: React.Dispatch<
+    React.SetStateAction<string>
+  >;
+
+  history: HistoryItem[];
+
+  setHistory: React.Dispatch<
+    React.SetStateAction<HistoryItem[]>
+  >;
+  setPromptScore: React.Dispatch<React.SetStateAction<number>>;
+
+  setRating: React.Dispatch<React.SetStateAction<string>>;
+
+  setStrengths: React.Dispatch<React.SetStateAction<string[]>>;
+
+  setSuggestions: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export default function UploadBox({
   setGeneratedPrompt,
+  setGeneratedPrompts,
+  setRecommendedModel,
+  setRecommendReason,
+  history,
+  setHistory,
+  setPromptScore,
+  setRating,
+  setStrengths,
+  setSuggestions,
 }: UploadBoxProps) {
 
-  const [image, setImage] = useState<string | null>(null);
-  const [imageBase64, setImageBase64] = useState("");
-  const [dragActive, setDragActive] = useState(false);
+  const [image, setImage] =
+    useState<string | null>(null);
 
-  const [loading, setLoading] = useState(false);
+  const [imageBase64, setImageBase64] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [loadingText, setLoadingText] =
+    useState("");
+  
+  const [progress, setProgress] = useState(0);
+
+  const [dragActive, setDragActive] =
+    useState(false);
 
   const fileInputRef =
     useRef<HTMLInputElement>(null);
@@ -39,106 +97,91 @@ export default function UploadBox({
     useState("Universal");
 
   const loadingSteps = [
-    "🧠 Understanding your image...",
-    "🎨 Detecting art style...",
-    "📷 Finding camera settings...",
-    "✨ Crafting professional prompt...",
+    "🧠 Understanding image...",
+    "🎨 Detecting style...",
+    "📷 Reading composition...",
+    "✨ Writing professional prompt...",
   ];
 
-  const [loadingText, setLoadingText] =
-    useState("");
+  const modelInfo = {
+    Universal: {
+      title: "Universal AI Prompt",
+      desc: "Works with almost every AI image model including ChatGPT, Gemini, Claude, Midjourney, Flux and more.",
+      color: "from-cyan-500 to-blue-600",
+    },
+
+    ChatGPT: {
+      title: "ChatGPT Images",
+      desc: "Optimized for ChatGPT Images with natural detailed descriptions.",
+      color: "from-green-500 to-emerald-600",
+    },
+
+    Midjourney: {
+      title: "Midjourney V7",
+      desc: "Produces cinematic prompts with artistic lighting and stylization.",
+      color: "from-fuchsia-500 to-pink-600",
+    },
+
+    Flux: {
+      title: "Flux",
+      desc: "Best for photorealistic outputs with realistic textures and lighting.",
+      color: "from-orange-500 to-red-600",
+    },
+
+    SDXL: {
+      title: "Stable Diffusion XL",
+      desc: "Optimized prompt structure for SDXL image generation.",
+      color: "from-violet-500 to-indigo-600",
+    },
+
+    Imagen: {
+      title: "Google Imagen",
+      desc: "Clean prompt structure for Google's Imagen model.",
+      color: "from-yellow-500 to-orange-500",
+    },
+  };
 
   function getPromptTemplate(mode: string) {
 
     switch (mode) {
 
       case "ChatGPT":
-        return `
-Generate a ChatGPT Images optimized prompt.
-
-Describe every visual detail naturally.
-
-Return only the prompt.
-`;
+        return "Generate a ChatGPT Images optimized prompt. Return only the prompt.";
 
       case "Midjourney":
-        return `
-Generate a Midjourney V7 prompt.
-
-Include cinematic lighting,
-masterpiece,
-ultra detailed,
-photorealistic.
-
-End with:
-
---ar 3:2
---stylize 300
---v 7
-
-Return only the prompt.
-`;
+        return "Generate a Midjourney V7 prompt. Include cinematic lighting, masterpiece, ultra detailed, photorealistic. Return only the prompt.";
 
       case "Flux":
-        return `
-Generate a Flux optimized prompt.
-
-Focus on realism,
-lighting,
-camera,
-materials,
-textures.
-
-Return only the prompt.
-`;
+        return "Generate a Flux optimized prompt focused on realism, textures, lighting and camera.";
 
       case "SDXL":
-        return `
-Generate a Stable Diffusion XL prompt.
-
-Include quality tags.
-
-Return only the prompt.
-`;
+        return "Generate a Stable Diffusion XL optimized prompt.";
 
       case "Imagen":
-        return `
-Generate a Google Imagen optimized prompt.
-
-Return only the prompt.
-`;
+        return "Generate a Google Imagen optimized prompt.";
 
       default:
-        return `
-Analyze this image carefully.
-
-Generate a universal AI image prompt.
-
-Include:
-
-Subject
-
-Composition
-
-Lighting
-
-Camera Angle
-
-Lens
-
-Colors
-
-Background
-
-Mood
-
-Style
-
-Return only the prompt.
-`;
+        return "Analyze the image carefully and generate a universal AI image prompt describing subject, composition, lighting, camera angle, colors, style and mood. Return only the prompt.";
     }
   }
 
+  function handleFile(file: File) {
+
+    setImage(URL.createObjectURL(file));
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+
+      setImageBase64(
+        reader.result as string
+      );
+
+    };
+
+    reader.readAsDataURL(file);
+
+  }
   async function generatePrompt() {
 
     if (!imageBase64) {
@@ -152,6 +195,14 @@ Return only the prompt.
     let step = 0;
 
     setLoading(true);
+    setProgress(0);
+
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+       if (prev >= 90) return prev;
+        return prev + 5;
+      });
+    }, 250);
 
     setLoadingText(loadingSteps[0]);
 
@@ -209,8 +260,36 @@ Return only the prompt.
 
       }
 
-      setGeneratedPrompt(data.text);
+      setGeneratedPrompts(data.prompts);
+      setRecommendedModel("ChatGPT");
+      setRecommendReason(data.reason);
+      setPromptScore(data.analysis.score);
+      setRating(data.analysis.rating);
+      setStrengths(data.analysis.strengths);
+      setSuggestions(data.analysis.suggestions);
 
+// Purane PromptGenerator ke liye
+setGeneratedPrompt(
+  data.prompts[selectedMode]
+);
+
+const newHistory = {
+  id: Date.now(),
+
+  prompt:
+    data.prompts[selectedMode],
+
+  mode: selectedMode,
+
+  createdAt:
+    new Date().toLocaleString(),
+
+  favorite: false,
+};
+
+setHistory(
+  [newHistory, ...history].slice(0, 10)
+);
       clearInterval(interval);
 
     } catch (err) {
@@ -219,204 +298,293 @@ Return only the prompt.
 
       console.error(err);
 
-      alert(
-        "Failed to generate prompt"
-      );
+      alert("Failed to generate prompt");
 
     } finally {
+
+      setProgress(100);
+
+      clearInterval(timer);
 
       setLoading(false);
 
       setLoadingText("");
 
     }
+
   }
-  function handleFile(file:File) {
-    setImage(URL.createObjectURL(file));
 
-    const reader =  new FileReader();
+  return (
 
-    reader.onloadend = ()=>{
-      setImageBase64(reader.result as string)
-    };
+    <motion.section
+  initial={{
+    opacity: 0,
+    y: 80,
+  }}
+  whileInView={{
+    opacity: 1,
+    y: 0,
+  }}
+  viewport={{
+    once: true,
+    amount: 0.2,
+  }}
+  transition={{
+    duration: 0.8,
+  }}
+  className="mt-20 flex justify-center px-6"
+>
 
-    reader.readAsDataURL(file);
-  }
-    return (
-    <section className="mt-20 flex justify-center px-6">
-      <div className="w-full max-w-3xl rounded-3xl border border-purple-500/30 bg-white/5 p-10 shadow-2xl shadow-purple-900/20 backdrop-blur-xl">
+      <div className="w-full max-w-5xl rounded-3xl border border-purple-500/30 bg-white/5 p-10 shadow-2xl shadow-purple-900/20 backdrop-blur-xl">
 
         <div className="flex flex-col items-center">
+        <div className="mt-8 w-full">
 
-          {/* Title */}
-          <div className="flex h-20 w-20 items-center justify-center rounded-full border border-purple-500 bg-purple-500/10">
-            <UploadCloud
-              size={38}
-              className="text-purple-400"
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+
+                const file = e.target.files?.[0];
+
+                if (!file) return;
+
+                handleFile(file);
+
+              }}
             />
-          </div>
 
-          <h2 className="mt-6 text-4xl font-bold text-white">
-            Upload Your Image
-          </h2>
+            <div
 
-          <p className="mt-3 max-w-xl text-center text-gray-400">
-            Upload any image and let PromptForge recreate it into a
-            professional AI prompt.
-          </p>
+              onClick={() =>
+                fileInputRef.current?.click()
+              }
 
-          {/* Hidden File Input */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-           onChange={(e)=>{
-            const file=e.target.files?.[0];
+              onDragOver={(e) => {
 
-            if(!file) return;
+                e.preventDefault();
 
-            handleFile(file);
-           }
+                setDragActive(true);
 
-           }
-          />
+              }}
 
-          {/* Upload Area */}
-          <div
-            onClick={() =>
-              fileInputRef.current?.click()
-            }
-            className={`mt-8 flex w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-10 transition-all duration-300 ${
-  dragActive
-    ? "border-cyan-400 bg-cyan-500/10 scale-[1.02]"
-    : "border-purple-500/40 bg-white/5 hover:bg-white/10"
-}`}
-            onDragOver={(e) => {
-  e.preventDefault();
-  setDragActive(true);
-}}
+              onDragLeave={(e) => {
 
-onDragLeave={(e) => {
-  e.preventDefault();
-  setDragActive(false);
-}}
+                e.preventDefault();
 
-onDrop={(e) => {
-  e.preventDefault();
+                const rect =
+                  e.currentTarget.getBoundingClientRect();
 
-  setDragActive(false);
+                const x = e.clientX;
 
-  const file = e.dataTransfer.files?.[0];
+                const y = e.clientY;
 
-  if (!file) return;
+                if (
+                  x <= rect.left ||
+                  x >= rect.right ||
+                  y <= rect.top ||
+                  y >= rect.bottom
+                ) {
 
-  handleFile(file);
-}}
-          >
+                  setDragActive(false);
 
-            {!image ? (
-              <>
+                }
 
-                <UploadCloud
-                  size={60}
-                  className="mb-5 text-purple-400"
-                />
+              }}
 
-                <h3 className="text-2xl font-semibold text-white">
-                  Drag & Drop Image
-                </h3>
+              onDrop={(e) => {
 
-                <p className="mt-2 text-gray-400">
-                  or Click to Upload
-                </p>
+                e.preventDefault();
 
-                <p className="mt-5 text-sm text-gray-500">
-                  PNG • JPG • JPEG • WEBP
-                </p>
+                setDragActive(false);
 
-              </>
-            ) : (
-              <>
+                const file =
+                  e.dataTransfer.files?.[0];
 
-                <img
-                  src={image}
-                  alt="Preview"
-                  className="w-80 rounded-2xl border border-purple-500 shadow-xl"
-                />
+                if (!file) return;
 
-                <div className="mt-5 flex items-center gap-2 text-green-400">
+                handleFile(file);
 
-                  <ImageIcon size={18} />
+              }}
 
-                  Image Ready
+              className={`relative overflow-hidden flex min-h-[340px] w-full cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed transition-all duration-300 ${
+                dragActive
+                  ? "scale-[1.02] border-cyan-400 bg-cyan-500/10"
+                  : "border-purple-500/40 bg-white/5 hover:bg-white/10"
+              }`}
+            >
+
+              {dragActive && (
+
+                <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-md">
+
+                  <div className="relative mb-6">
+
+                    <div className="absolute inset-0 animate-ping rounded-full bg-cyan-400/20"></div>
+
+                    <UploadCloud
+                      size={90}
+                      className="relative animate-bounce text-cyan-300 drop-shadow-[0_0_25px_rgba(34,211,238,0.9)]"
+                    />
+
+                  </div>
+
+                  <h2 className="bg-gradient-to-r from-cyan-300 via-white to-cyan-300 bg-clip-text text-4xl font-extrabold text-transparent">
+                    Drop Image Here
+                  </h2>
+
+                  <p className="mt-3 text-lg text-cyan-100">
+                    Release to upload instantly 🚀
+                  </p>
 
                 </div>
 
-              </>
-            )}
+              )}
 
-          </div>
+              {!image ? (
 
-          {/* Prompt Modes */}
-          <div className="mt-10 w-full">
+                <>
 
-            <h3 className="mb-4 text-left text-lg font-semibold text-white">
-              ✨ Optimize For
-            </h3>
+                  <UploadCloud
+                    size={70}
+                    className="mb-6 text-purple-400"
+                  />
 
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                  <h2 className="text-3xl font-bold text-white">
+                    Drag & Drop Image
+                  </h2>
 
-              {promptModes.map((mode) => (
+                  <p className="mt-3 text-gray-400">
+                    or Click to Browse
+                  </p>
 
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() =>
-                    setSelectedMode(mode)
-                  }
-                  className={`rounded-xl border px-4 py-3 font-medium transition-all duration-300 ${
-                    selectedMode === mode
-                      ? "border-purple-500 bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-600/30"
-                      : "border-gray-700 bg-white/5 text-gray-300 hover:border-purple-500 hover:bg-white/10"
-                  }`}
-                >
-                  {mode}
-                </button>
+                  <p className="mt-8 text-sm text-gray-500">
+                    PNG • JPG • JPEG • WEBP
+                  </p>
 
-              ))}
+                </>
+
+              ) : (
+
+                <>
+
+                  <img
+                    src={image}
+                    alt="Preview"
+                    className="w-80 rounded-2xl border border-purple-500 shadow-2xl"
+                  />
+
+                  <div className="mt-5 flex items-center gap-2 text-green-400">
+
+                    <ImageIcon size={18} />
+
+                    Image Ready
+
+                  </div>
+
+                </>
+
+              )}
+
+
 
             </div>
+            <div className="mb-10 rounded-3xl border border-cyan-500/20 bg-cyan-500/5 p-6">
+
+  <div className="flex items-center gap-3">
+
+    <div className="text-3xl">
+      🧠
+    </div>
+
+    <div>
+
+      <h3 className="text-xl font-bold text-white">
+        AI Output
+      </h3>
+
+      <p className="mt-1 text-gray-400">
+        PromptForge automatically generates optimized prompts
+        for every supported AI model. No manual selection required.
+      </p>
+
+    </div>
+
+  </div>
+
+  <div className="mt-6 flex flex-wrap gap-3">
+
+    {[
+      "Universal",
+      "ChatGPT",
+      "Midjourney",
+      "Flux",
+      "SDXL",
+      "Imagen",
+    ].map((model) => (
+
+      <div
+        key={model}
+        className="rounded-full border border-cyan-500/20 bg-black/30 px-4 py-2 text-sm text-cyan-300"
+      >
+        ✅ {model}
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
+
+            {/* Generate Button */}
+
+            <button
+              onClick={generatePrompt}
+              disabled={loading}
+              className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 py-4 text-lg font-bold text-white transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+
+              {loading ? (
+                <>
+                  <Sparkles
+                    className="animate-spin"
+                    size={22}
+                  />
+
+                  {loadingText}
+                  <div className="mt-3 w-64">
+                  <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 transition-all duration-300"
+                      style={{
+                        width: `${progress}%`,
+                      }}
+                    />
+                 </div>
+
+                 <p className="mt-2 text-center text-xs text-gray-400">
+                   {progress}%
+                 </p>
+                </div>                
+                </>
+              ) : (
+                <>
+                  🚀 Generate Prompt
+                </>
+              )}
+
+            </button>
 
           </div>
-
-          {/* Generate Button */}
-          <button
-            onClick={generatePrompt}
-            disabled={loading}
-            className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 py-4 text-lg font-bold text-white transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
-          >
-
-            {loading ? (
-              <>
-                <Sparkles
-                  className="animate-spin"
-                  size={22}
-                />
-
-                {loadingText}
-              </>
-            ) : (
-              <>
-                🚀 Generate Prompt
-              </>
-            )}
-
-          </button>
 
         </div>
 
       </div>
-    </section>
+
+    </motion.section>
+
   );
+
 }
