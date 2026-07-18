@@ -57,28 +57,6 @@ export default function Navbar() {
 </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center gap-8 text-sm font-medium text-gray-300 md:flex">
-          <a
-            href="#"
-            className="transition-colors duration-300 hover:text-cyan-300"
-          >
-            Features
-          </a>
-
-          <a
-            href="#"
-            className="transition-colors duration-300 hover:text-cyan-300"
-          >
-            Pricing
-          </a>
-
-          <a
-            href="#"
-            className="transition-colors duration-300 hover:text-cyan-300"
-          >
-            About
-          </a>
-        </div>
 
         {/* Right Side */}
         <div className="flex items-center gap-4">

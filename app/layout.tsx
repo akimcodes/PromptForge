@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   creator: "PromptForge",
 
   icons: {
-    icon: "/favicon.png",
+    icon: "/icon.png",
   },
 
   openGraph: {
@@ -60,8 +60,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

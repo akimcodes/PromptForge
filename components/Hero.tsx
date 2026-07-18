@@ -68,10 +68,6 @@ const item = {hidden: {opacity: 0,y: 40,},show: {
             🚀 Generate Prompt
           </button>
 
-          <button className="rounded-xl border border-gray-700 bg-white/5 px-8 py-4 font-semibold text-white backdrop-blur-md transition duration-300 hover:border-purple-500 hover:bg-white/10 active:scale-95">
-            📖 Learn More
-          </button>
-
         </motion.h1>
 
         {/* Stats */}
