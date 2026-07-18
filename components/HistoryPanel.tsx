@@ -50,16 +50,20 @@ export default function HistoryPanel({
         const [filter, setFilter] = useState("All");
 
         const filteredHistory = history.filter((item) => {
-          const matchSearch =item.prompt
-              .toLowerCase()
-              .includes(search.toLowerCase());
+        const matchSearch = item.prompt
+         .toLowerCase()
+          .includes(search.toLowerCase());
 
-          const matchFilter =
-            filter === "All" ||
-            item.mode === filter;
+       if (filter === "⭐ Favorites") {
+         return matchSearch && item.favorite;
+       }
 
-          return matchSearch && matchFilter;
-        });         
+       const matchFilter =
+          filter === "All" ||
+         item.mode === filter;
+
+       return matchSearch && matchFilter;
+      });       
   return (
     <motion.section
   initial={{ opacity: 0, y: 80 }}
@@ -120,15 +124,16 @@ export default function HistoryPanel({
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white"
-         >
-           <option>All</option>
-           <option>Universal</option>
-           <option>ChatGPT</option>
-           <option>Midjourney</option>
-           <option>Flux</option>
-           <option>SDXL</option>
-           <option>Imagen</option>
-         </select>
+        >
+         <option>All</option>
+         <option>⭐ Favorites</option>
+          <option>Universal</option>
+          <option>ChatGPT</option>
+          <option>Midjourney</option>
+          <option>Flux</option>
+          <option>SDXL</option>
+         <option>Imagen</option>
+        </select>
 
         </div>      
 
