@@ -110,6 +110,19 @@ const toggleFavorite = async (id: string) => {
   onDelete={deleteHistory}
   toggleFavorite={toggleFavorite}
 />
+<footer className="mt-24 border-t border-white/10 py-10 text-center">
+  <h2 className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-2xl font-bold text-transparent">
+    PromptForge
+  </h2>
+
+  <p className="mt-3 text-gray-400">
+    Craft Better Prompts.
+  </p>
+
+  <p className="mt-6 text-sm text-gray-500">
+    © 2026 PromptForge. All rights reserved.
+  </p>
+</footer>
     </main>
   );
 }

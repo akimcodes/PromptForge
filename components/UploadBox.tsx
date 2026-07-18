@@ -407,7 +407,7 @@ if (user) {
 
      <motion.div whileHover={{y: -8, scale: 1.01,}}
   transition={{ duration: 0.25,}}
-  className="group relative w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-10 backdrop-blur-xl transition-all duration-500 hover:border-cyan-400/40"
+  className="group relative w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-8 lg:p-10 backdrop-blur-xl shadow-2xl shadow-black/20 transition-all duration-500 hover:-translate-y-1 hover:border-cyan-400/40"
 >
   <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
   <div className="absolute -left-32 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-cyan-500/20 blur-3xl" />
@@ -485,7 +485,7 @@ if (user) {
 
               }}
 
-              className={`relative overflow-hidden flex min-h-[340px] w-full cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed transition-all duration-300 ${
+              className={`relative overflow-hidden flex min-h-[280px] sm:min-h-[320px] lg:min-h-[340px] w-full cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed transition-all duration-300 ${
                 dragActive
                   ? "scale-[1.02] border-cyan-400 bg-cyan-500/10"
                   : "border-purple-500/40 bg-white/5 hover:bg-white/10"
@@ -524,11 +524,11 @@ if (user) {
                 <>
 
                   <UploadCloud
-                    size={70}
-                    className="mb-6 text-purple-400"
+                    size={64}
+                    className="mb-6 text-purple-400 transition-transform duration-300 group-hover:scale-110"
                   />
 
-                  <h2 className="text-3xl font-bold text-white">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white">
                     Drag & Drop Image
                   </h2>
 
@@ -549,7 +549,7 @@ if (user) {
                   <img
                     src={image}
                     alt="Preview"
-                    className="w-80 rounded-2xl border border-purple-500 shadow-2xl"
+                    className="w-full max-w-sm rounded-2xl border border-purple-500/50 shadow-2xl"
                   />
 
                   <div className="mt-5 flex items-center gap-2 text-green-400">
@@ -567,11 +567,11 @@ if (user) {
 
 
             </div>
-            <div className="mb-10 rounded-3xl border border-cyan-500/20 bg-cyan-500/5 p-6">
+            <div className="mb-10 rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 bg-cyan-500/5 p-6">
 
   <div className="flex items-center gap-3">
 
-    <div className="text-3xl">
+    <div className="text-2xl sm:text-3xl">
       🧠
     </div>
 
@@ -619,7 +619,7 @@ if (user) {
             <button
               onClick={generatePrompt}
               disabled={loading}
-              className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 py-4 text-lg font-bold text-white transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50 hover:shadow-[0_0_40px_rgba(34,211,238,0.35)] active:scale-95 transition-all duration-300"
+              className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 py-4 text-lg font-bold text-white transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50 hover:shadow-[0_0_40px_rgba(34,211,238,0.35)] active:scale-95 transition-all duration-300 shadow-xl shadow-cyan-500/20 hover:shadow-cyan-400/40"
             >
 
               {loading ? (

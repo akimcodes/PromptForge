@@ -168,7 +168,7 @@ export default function PromptGenerator({
   transition={{
     duration: 0.25,
   }}
-  className="group w-full max-w-5xl rounded-3xl border  border-white/10 bg-white/[0.04] p-8 shadow-2xl shadow-purple-900/20 backdrop-blur-xl transition-all duration-300 hover:border-cyan-400/40 hover:shadow-[0_0_60px_rgba(34,211,238,0.18)]"
+ className="group w-full max-w-5xl rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-8 lg:p-10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-[0_0_60px_rgba(34,211,238,0.18)]"
 >
       <div className="mb-8">
 
@@ -183,7 +183,7 @@ export default function PromptGenerator({
       <button
         key={style}
         onClick={() => setSelectedStyle(style)}
-        className={`rounded-xl border px-4 py-2 transition ${
+        className={`rounded-2xl font-medium border px-4 py-2 transition ${
           selectedStyle === style
             ? "border-cyan-500 bg-cyan-500 text-white"
             : "border-white/20 bg-white/5 text-gray-300 hover:bg-white/10"
@@ -216,12 +216,14 @@ export default function PromptGenerator({
 
           </div>
 
-          <div className="flex gap-3">
+          <div className="mt-6 flex flex-wrap gap-3">
 
             <button
               onClick={() => setEditing(!editing)}
               disabled={!recommendedPrompt}
-              className="flex items-center gap-2 rounded-xl border border-yellow-500 bg-yellow-500/10 px-5 py-3 text-white hover:bg-yellow-600 disabled:opacity-40"
+              className="flex items-center gap-2 rounded-xl border border-yellow-500 bg-yellow-500/10 px-5 py-3 text-white hover:bg-yellow-600 disabled:opacity-40 transition-all duration-300
+hover:scale-105
+active:scale-95"
             >
               <Pencil size={18} />
               {editing ? "Cancel" : "Edit"}
@@ -230,7 +232,9 @@ export default function PromptGenerator({
             <button
               onClick={copyPrompt}
               disabled={!recommendedPrompt}
-              className="flex items-center gap-2 rounded-xl border border-purple-500 bg-purple-500/10 px-5 py-3 text-white hover:bg-purple-600 disabled:opacity-40"
+              className="flex items-center gap-2 rounded-xl border border-purple-500 bg-purple-500/10 px-5 py-3 text-white hover:bg-purple-600 disabled:opacity-40 transition-all duration-300
+hover:scale-105
+active:scale-95"
             >
               {copied ? (
                 <>
@@ -248,7 +252,9 @@ export default function PromptGenerator({
             <button
               onClick={downloadPrompt}
               disabled={!recommendedPrompt}
-              className="flex items-center gap-2 rounded-xl border border-blue-500 bg-blue-500/10 px-5 py-3 text-white hover:bg-blue-600 disabled:opacity-40"
+              className="flex items-center gap-2 rounded-xl border border-blue-500 bg-blue-500/10 px-5 py-3 text-white hover:bg-blue-600 disabled:opacity-40 transition-all duration-300
+hover:scale-105
+active:scale-95"
             >
               <Download size={18} />
               Download
@@ -256,7 +262,9 @@ export default function PromptGenerator({
             <button
              onClick={improvePrompt}
              disabled={!recommendedPrompt || improving}
-             className="flex items-center gap-2 rounded-xl border border-pink-500 bg-pink-500/10 px-5 py-3 text-white transition hover:bg-pink-600 disabled:opacity-40"
+             className="flex items-center gap-2 rounded-xl border border-pink-500 bg-pink-500/10 px-5 py-3 text-white transition hover:bg-pink-600 disabled:opacity-40 transition-all duration-300
+hover:scale-105
+active:scale-95"
             >
               <Wand2
                 size={18}
@@ -270,9 +278,9 @@ export default function PromptGenerator({
 
         </div>
 
-        <div className="mt-8 min-h-[320px] max-h-[500px] overflow-y-auto rounded-2xl border border-white/10 bg-black/40 p-6">
+        <div className="mt-8 min-h-[320px] max-h-[500px] overflow-y-auto rounded-2xl border border-white/10 bg-gradient-to-b from-black/40 to-slate-900/70 p-6 scrollbar-thin scrollbar-thumb-cyan-500/40 scrollbar-track-transparent">
 
-        <div className="mb-8 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-6">
+        <div className="mb-8 rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 p-6">
 
         <h3 className="text-2xl font-bold text-white">
           🏆 AI Prompt Quality
@@ -344,7 +352,7 @@ export default function PromptGenerator({
 
             <div className="flex h-[250px] flex-col items-center justify-center text-center">
 
-              <div className="mb-4 text-5xl">
+              <div className="mb-4 text-6xl">
                 ✨
               </div>
 

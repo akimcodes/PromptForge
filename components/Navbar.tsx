@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 import {
   Show,
@@ -13,55 +14,97 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-  function handleScroll() {
-    setScrolled(window.scrollY > 40);
-  }
+    function handleScroll() {
+      setScrolled(window.scrollY > 40);
+    }
 
-  window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
-  return () =>
-    window.removeEventListener("scroll", handleScroll);
-}, []);
+    return () =>
+      window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <motion.nav
-  animate={{
-    backdropFilter: scrolled ? "blur(18px)" : "blur(0px)",
-  }}
-  className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-    scrolled
-      ? "bg-black/40 backdrop-blur-2xl border-b border-white/10 shadow-lg"
-      : "bg-transparent"
-  }`}
->
-  <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5">
+      initial={{ y: -80 }}
+      animate={{
+        y: 0,
+        backdropFilter: scrolled ? "blur(18px)" : "blur(0px)",
+      }}
+      transition={{
+        duration: 0.5,
+      }}
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "border-b border-white/10 bg-black/40 shadow-lg shadow-black/20 backdrop-blur-2xl"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 sm:px-8">
 
-    <h1 className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-3xl font-black text-transparent">
-      PromptForge
-    </h1>
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+  <Image
+    src="/logo.png"
+    alt="PromptForge"
+    width={42}
+    height={42}
+  />
 
-    <div className="hidden gap-8 text-gray-300 md:flex">
-      <a href="#">Features</a>
-      <a href="#">Pricing</a>
-      <a href="#">About</a>
-    </div>
+  <h1 className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-3xl font-black text-transparent">
+    PromptForge
+  </h1>
+</div>
 
-    <div className="flex items-center gap-4">
+        {/* Desktop Navigation */}
+        <div className="hidden items-center gap-8 text-sm font-medium text-gray-300 md:flex">
+          <a
+            href="#"
+            className="transition-colors duration-300 hover:text-cyan-300"
+          >
+            Features
+          </a>
 
-      <Show when="signed-out">
-  <SignInButton mode="modal">
-    <button className="rounded-xl border border-cyan-400/40 px-5 py-2 text-white transition hover:bg-cyan-500/20">
-      Sign In
-    </button>
-  </SignInButton>
-</Show>
+          <a
+            href="#"
+            className="transition-colors duration-300 hover:text-cyan-300"
+          >
+            Pricing
+          </a>
 
-<Show when="signed-in">
-  <UserButton />
-</Show>
+          <a
+            href="#"
+            className="transition-colors duration-300 hover:text-cyan-300"
+          >
+            About
+          </a>
+        </div>
 
-    </div>
+        {/* Right Side */}
+        <div className="flex items-center gap-4">
 
-  </div>
-</motion.nav>
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button className="rounded-xl border border-cyan-400/40 bg-white/5 px-5 py-2 font-medium text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-cyan-400 hover:bg-cyan-500/20 active:scale-95">
+                Sign In
+              </button>
+            </SignInButton>
+          </Show>
+
+          <Show when="signed-in">
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox:
+                    "h-10 w-10 ring-2 ring-cyan-400/30",
+                },
+              }}
+            />
+          </Show>
+
+        </div>
+
+      </div>
+    </motion.nav>
   );
 }
