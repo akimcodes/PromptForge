@@ -8,6 +8,7 @@ const ai = new GoogleGenAI({
 export async function POST(req: Request) {
   try {
     const { image } = await req.json();
+    console.log("API Key exists:", !!process.env.NEXT_PUBLIC_GEMINI_API_KEY);
 
     const result = await ai.models.generateContent({
       model: "gemini-2.5-flash",

@@ -155,11 +155,21 @@ export default function PromptGenerator({
     <motion.section
   initial={{ opacity: 0, y: 80 }}
   whileInView={{ opacity: 1, y: 0 }}
+  whileHover={{y:-8, scale: 1.01}}
   viewport={{ once: true, amount: 0.2 }}
-  transition={{ duration: 0.8 }}
+  transition={{ duration: 0.25 }}
   className="mt-20 mb-20 flex justify-center px-6"
 >
-      <div className="w-full max-w-5xl rounded-3xl border border-purple-500/30 bg-white/5 p-8 shadow-2xl shadow-purple-900/20 backdrop-blur-xl">
+      <motion.div
+  whileHover={{
+    y: -6,
+    scale: 1.01,
+  }}
+  transition={{
+    duration: 0.25,
+  }}
+  className="group w-full max-w-5xl rounded-3xl border  border-white/10 bg-white/[0.04] p-8 shadow-2xl shadow-purple-900/20 backdrop-blur-xl transition-all duration-300 hover:border-cyan-400/40 hover:shadow-[0_0_60px_rgba(34,211,238,0.18)]"
+>
       <div className="mb-8">
 
   <h3 className="mb-4 text-lg font-semibold text-white">
@@ -354,7 +364,7 @@ export default function PromptGenerator({
 
         </div>
 
-      </div>
+      </motion.div>
     </motion.section>
   );
 }

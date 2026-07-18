@@ -34,7 +34,16 @@ export default function PromptComparison({
   className="mt-20 mb-20 flex justify-center px-6"
 >
 
-      <div className="w-full max-w-6xl rounded-3xl border border-cyan-500/20 bg-white/5 p-8 backdrop-blur-xl">
+      <motion.div
+  whileHover={{
+    y: -6,
+    scale: 1.01,
+  }}
+  transition={{
+    duration: 0.25,
+  }}
+  className="group w-full max-w-6xl rounded-3xl border border-white/10 bg-white/[0.04] p-8 transition-all duration-300 hover:border-cyan-400/40 hover:shadow-[0_0_60px_rgba(34,211,238,0.18)]"
+>
 
         <h2 className="text-3xl font-bold text-white">
           🚀 Multi-Model Prompt Comparison
@@ -93,7 +102,7 @@ export default function PromptComparison({
 
         </div>
 
-      </div>
+      </motion.div>
 
     </motion.section>
   );

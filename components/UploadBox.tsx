@@ -1,19 +1,22 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   UploadCloud,
   ImageIcon,
   Sparkles,
 } from "lucide-react";
 import {motion} from "framer-motion";
+import { supabase } from "@/lib/supabase";
+import{ useUser } from "@clerk/nextjs"
 
 type HistoryItem = {
-  id: number;
+  id: string;
   prompt: string;
   mode: string;
   createdAt: string;
-  favorite?:boolean;
+  imageUrl: string;
+  favorite?: boolean;
 };
 
 type UploadBoxProps = {
@@ -63,6 +66,38 @@ export default function UploadBox({
   setStrengths,
   setSuggestions,
 }: UploadBoxProps) {
+  const { user } = useUser();
+
+  useEffect(() => {
+  async function loadHistory() {
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("prompt_history")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const historyData =
+      data?.map((item, index) => ({
+        id: item.id,
+        prompt: item.improved_prompt,
+        mode: item.model,
+        createdAt: new Date(item.created_at).toLocaleString(),
+        imageUrl: item.image_url,
+        favorite: item.favorite,
+      })) || [];
+
+    setHistory(historyData);
+  }
+
+  loadHistory();
+}, [user, setHistory]);
 
   const [image, setImage] =
     useState<string | null>(null);
@@ -140,6 +175,7 @@ export default function UploadBox({
       color: "from-yellow-500 to-orange-500",
     },
   };
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   function getPromptTemplate(mode: string) {
 
@@ -166,6 +202,7 @@ export default function UploadBox({
   }
 
   function handleFile(file: File) {
+    setSelectedFile(file);
 
     setImage(URL.createObjectURL(file));
 
@@ -221,6 +258,30 @@ export default function UploadBox({
     }, 1200);
 
     try {
+      if (!selectedFile) {
+  alert("Please upload an image first!");
+  return;
+}
+
+const fileName = `${user?.id}/${Date.now()}-${selectedFile.name}`;
+
+const formData = new FormData();
+formData.append("file", selectedFile);
+
+const uploadRes = await fetch("/api/upload", {
+  method: "POST",
+  body: formData,
+});
+
+const uploadData = await uploadRes.json();
+
+if (!uploadRes.ok) {
+  throw new Error(uploadData.error);
+}
+
+const imageUrl = uploadData.url;
+
+console.log("Image URL:", imageUrl);
 
       const res = await fetch(
         "/api/generate",
@@ -273,23 +334,44 @@ setGeneratedPrompt(
   data.prompts[selectedMode]
 );
 
-const newHistory = {
-  id: Date.now(),
+if (user) {
+  const { data: insertedData, error } = await supabase
+    .from("prompt_history")
+    .insert({    
+      user_id: user.id,
+      image_url: imageUrl,
+    
+      original_prompt: getPromptTemplate(selectedMode),
+      improved_prompt: data.prompts[selectedMode],
+      model: selectedMode,
+    
+      universal_prompt: data.prompts.Universal,
+      chatgpt_prompt: data.prompts.ChatGPT,
+      midjourney_prompt: data.prompts.Midjourney,
+      flux_prompt: data.prompts.Flux,
+      sdxl_prompt: data.prompts.SDXL,
+      imagen_prompt: data.prompts.Imagen,
+    
+      favorite: false,
+    })
+    .select()
+    .single();
 
-  prompt:
-    data.prompts[selectedMode],
+  if (error) {
+    console.error("Supabase Error:", error);
+  } else if (insertedData) {
+    const newHistory = {
+      id: insertedData.id,
+      prompt: insertedData.improved_prompt,
+      mode: insertedData.model,
+      createdAt: new Date(insertedData.created_at).toLocaleString(),
+      imageUrl: insertedData.image_url,
+      favorite: false,
+    };
 
-  mode: selectedMode,
-
-  createdAt:
-    new Date().toLocaleString(),
-
-  favorite: false,
-};
-
-setHistory(
-  [newHistory, ...history].slice(0, 10)
-);
+    setHistory((prev) => [newHistory, ...prev].slice(0, 10));
+  }
+}
       clearInterval(interval);
 
     } catch (err) {
@@ -316,26 +398,20 @@ setHistory(
 
   return (
 
-    <motion.section
-  initial={{
-    opacity: 0,
-    y: 80,
-  }}
-  whileInView={{
-    opacity: 1,
-    y: 0,
-  }}
-  viewport={{
-    once: true,
-    amount: 0.2,
-  }}
-  transition={{
-    duration: 0.8,
-  }}
+    <motion.section initial={{opacity: 0,y: 80,}}
+  whileInView={{opacity: 1, y: 0,}}
+  viewport={{once: true,amount: 0.2,}}
+  transition={{ duration: 0.8,}}
   className="mt-20 flex justify-center px-6"
 >
 
-      <div className="w-full max-w-5xl rounded-3xl border border-purple-500/30 bg-white/5 p-10 shadow-2xl shadow-purple-900/20 backdrop-blur-xl">
+     <motion.div whileHover={{y: -8, scale: 1.01,}}
+  transition={{ duration: 0.25,}}
+  className="group relative w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-10 backdrop-blur-xl transition-all duration-500 hover:border-cyan-400/40"
+>
+  <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+  <div className="absolute -left-32 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-cyan-500/20 blur-3xl" />
+</div>
 
         <div className="flex flex-col items-center">
         <div className="mt-8 w-full">
@@ -543,7 +619,7 @@ setHistory(
             <button
               onClick={generatePrompt}
               disabled={loading}
-              className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 py-4 text-lg font-bold text-white transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 py-4 text-lg font-bold text-white transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50 hover:shadow-[0_0_40px_rgba(34,211,238,0.35)] active:scale-95 transition-all duration-300"
             >
 
               {loading ? (
@@ -581,7 +657,7 @@ setHistory(
 
         </div>
 
-      </div>
+      </motion.div>
 
     </motion.section>
 

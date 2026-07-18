@@ -1,5 +1,5 @@
 "use client";
-import { Copy, RotateCcw, Trash2 } from "lucide-react";
+import { Copy, RotateCcw, Trash2, Star } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 async function copyPrompt(text: string) {
@@ -8,17 +8,19 @@ async function copyPrompt(text: string) {
 }
 
 type HistoryItem = {
-  id: number;
+  id: string;
   prompt: string;
   mode: string;
   createdAt: string;
+  imageUrl: string;
+  favorite?: boolean;
 };
 
 type HistoryPanelProps = {
   history: HistoryItem[];
   onSelect: (prompt: string) => void;
-  onDelete: (id: number) => void;
-  toggleFavorite: (id: number)=> void;
+  onDelete: (id: string) => void;
+  toggleFavorite: (id: string)=> void;
 };
 
 export default function HistoryPanel({
@@ -66,7 +68,16 @@ export default function HistoryPanel({
   transition={{ duration: 0.8 }}
   className="mt-20 mb-20 flex justify-center px-6"
 >
-      <div className="w-full max-w-5xl rounded-3xl border border-purple-500/30 bg-white/5 backdrop-blur-xl p-8">
+      <motion.div
+  whileHover={{
+    y: -6,
+    scale: 1.01,
+  }}
+  transition={{
+    duration: 0.25,
+  }}
+  className="w-full max-w-5xl rounded-3xl border  border-white/10 bg-white/[0.04] backdrop-blur-xl p-8"
+>
 
         <h2 className="text-3xl font-bold text-white mb-6">
           📜 Prompt History
@@ -158,6 +169,13 @@ export default function HistoryPanel({
                      </span>
 
                    </div>
+                   {item.imageUrl && (
+                    <img
+                     src={item.imageUrl}
+                      alt="Uploaded"
+                      className="mb-4 aspect-video w-full rounded-xl object-cover"
+                   />
+                  )}
 
                    <p className="mt-4 line-clamp-4 text-gray-300">
                      {item.prompt}
@@ -180,6 +198,19 @@ export default function HistoryPanel({
                       <Copy size={16} />
                       Copy
                     </button>
+                    <button onClick={() => toggleFavorite(item.id)}
+                      className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white transition hover:scale-105 ${
+                        item.favorite
+                          ? "bg-yellow-500 hover:bg-yellow-600"
+                          : "bg-gray-700 hover:bg-gray-600"
+                      }`}
+                    >
+                      <Star
+                        size={16}
+                        fill={item.favorite ? "currentColor" : "none"}
+                      />
+                      {item.favorite ? "Favorited" : "Favorite"}
+                    </button>
 
                     <button
                       onClick={(e) => {e.stopPropagation();onDelete(item.id);}}
@@ -195,7 +226,7 @@ export default function HistoryPanel({
                 ))}
           </div>
         )}
-      </div>
+      </motion.div>
     </motion.section>
   );
 }

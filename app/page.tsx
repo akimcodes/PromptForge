@@ -8,6 +8,7 @@ import UploadBox from "@/components/UploadBox";
 import HistoryPanel from "@/components/HistoryPanel";
 import PromptComparison from "@/components/PromptComparison";
 import AuroraBackground from "@/components/AuroraBackgroud";
+import { supabase } from "@/lib/supabase";
 
 export default function Home() {
 
@@ -20,15 +21,16 @@ export default function Home() {
   SDXL: "",
   Imagen: "",
 });
-  const [history, setHistory] = useState<
-  {
-    id: number;
-    prompt: string;
-    mode: string;
-    createdAt: string;
-    favorite?:boolean
-  }[]
-  >([]);
+const [history, setHistory] = useState<
+{
+  id: string;
+  prompt: string;
+  mode: string;
+  createdAt: string;
+  imageUrl: string;
+  favorite?: boolean;
+}[]
+>([]);
   const [recommendedModel, setRecommendedModel] = useState("");
   const [recommendReason, setRecommendReason] = useState("");
   const [promptScore, setPromptScore] = useState(0);
@@ -36,29 +38,40 @@ export default function Home() {
   const [strengths, setStrengths] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
-  useEffect(()=>{
-    const saved = localStorage.getItem("prompt-history");
-    if(saved){
-      setHistory(JSON.parse(saved));
-    }
-  },[]);
-  useEffect(()=> {
-    localStorage.setItem(
-      "prompt-history",JSON.stringify(history)
-    );
-  },[history]);
+const deleteHistory = async (id: string) => {
+  const { error } = await supabase
+    .from("prompt_history")
+    .delete()
+    .eq("id", id);
 
-  function deleteHistory(id: number) {
-  setHistory((prev) => prev.filter((item) => item.id !== id));
+  if (error) {
+    console.error(error);
+    return;
   }
-  const toggleFavorite = (id: number) => {
+
+  setHistory((prev) => prev.filter((item) => item.id !== id));
+};
+const toggleFavorite = async (id: string) => {
+  const current = history.find((item) => item.id === id);
+
+  if (!current) return;
+
+  const newValue = !current.favorite;
+
+  const { error } = await supabase
+    .from("prompt_history")
+    .update({ favorite: newValue })
+    .eq("id", id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
   setHistory((prev) =>
     prev.map((item) =>
       item.id === id
-        ? {
-            ...item,
-            favorite: !item.favorite,
-          }
+        ? { ...item, favorite: newValue }
         : item
     )
   );
