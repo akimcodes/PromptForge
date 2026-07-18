@@ -69,7 +69,7 @@ export default function Navbar() {
             </SignInButton>
           </Show>
 
-          <Show when="signed-in">
+          <Show when= "signed-in">
             <UserButton
               appearance={{
                 elements: {
