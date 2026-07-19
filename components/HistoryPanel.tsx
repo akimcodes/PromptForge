@@ -188,7 +188,7 @@ focus:ring-cyan-500/30"
                      {item.prompt}
                    </p>
 
-                   <div className="mt-5 flex gap-3">
+                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
 
                     <button
                       onClick={() => onSelect(item.prompt)}
