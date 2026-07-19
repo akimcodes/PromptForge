@@ -398,11 +398,13 @@ if (user) {
 
   return (
 
-    <motion.section initial={{opacity: 0,y: 80,}}
+    <motion.section 
+    id="upload"
+    initial={{opacity: 0,y: 80,}}
   whileInView={{opacity: 1, y: 0,}}
   viewport={{once: true,amount: 0.2,}}
   transition={{ duration: 0.8,}}
-  className="mt-20 flex justify-center px-6"
+  className="mt-20 flex justify-center px-6 scroll-smooth"
 >
 
      <motion.div whileHover={{y: -8, scale: 1.01,}}

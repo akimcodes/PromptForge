@@ -23,7 +23,6 @@ const item = {hidden: {opacity: 0,y: 40,},show: {
       <div className="absolute left-1/2 top-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-purple-600/20 blur-[180px]" />
       <div className="absolute right-10 top-20 h-72 w-72 rounded-full bg-blue-600/10 blur-[150px]" />
       <div className="absolute left-10 bottom-10 h-72 w-72 rounded-full bg-pink-500/10 blur-[150px]" />
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black" />
 
       <motion.div variants={container}
           initial="hidden"
