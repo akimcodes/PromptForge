@@ -35,7 +35,7 @@ export default function PromptComparison({
 >
 
 <div
-  className="w-full max-w-6xl rounded-3xl border border-white/10 bg-slate-900 p-8 shadow-none"
+  className="w-full max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl p-8 shadow-[0_0_25px_rgba(34,211,238,0.08)]"
 >
 
         <h2 className="text-3xl font-bold text-white">
@@ -52,7 +52,7 @@ export default function PromptComparison({
 
             <div
               key={model}
-              className="rounded-2xl border border-cyan-400/20 bg-white/[0.06] p-6 backdrop-blur-xl"
+              className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl"
             >
 
               <div className="flex items-center justify-between">
@@ -63,7 +63,7 @@ export default function PromptComparison({
 
                 <button
                   onClick={() => copyPrompt(prompt)}
-                  className="flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-500"
+                  className="flex items-center gap-2 rounded-xl bg-cyan-500/80 hover:bg-cyan-400 px-4 py-2 text-white hover:bg-cyan-500"
                 >
                   <Copy size={16} />
                   Copy
@@ -71,7 +71,7 @@ export default function PromptComparison({
 
               </div>
 
-              <div className="mt-5 rounded-xl bg-white/[0.05] p-4 border border-white/10">
+              <div className="mt-5 rounded-xl bg-black/20 p-4 border border-white/5">
 
                 {prompt ? (
 

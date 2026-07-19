@@ -64,7 +64,7 @@ const smoothY = useSpring(mouseY, springConfig);
             repeat: Infinity,
             ease: "easeInOut",
         }}
-        className="absolute left-[-300px] top-[-250px] h-[900px] w-[900px] rounded-full bg-cyan-400/60 blur-[280px]"
+        className="absolute left-[-300px] top-[-250px] h-[700px] w-[700px] rounded-full bg-cyan-400/25 blur-[220px]"
       />
 
       <motion.div
@@ -78,7 +78,7 @@ const smoothY = useSpring(mouseY, springConfig);
             repeat: Infinity,
             ease: "easeInOut",
         }}
-        className="absolute right-[-300px] bottom-[-250px] h-[900px] w-[900px] rounded-full bg-purple-500/60 blur-[280px]"
+        className="absolute right-[-300px] bottom-[-250px] h-[700px] w-[700px] rounded-full bg-purple-500/25 blur-[220px]"
       />
       {mounted &&
         Array.from({ length: 35 }).map((_, i) => (
@@ -107,14 +107,14 @@ const smoothY = useSpring(mouseY, springConfig);
     x: smoothX,
     y: smoothY,
   }}
-  className="absolute h-[400px] w-[400px] rounded-full bg-cyan-400/10 blur-[140px]"
+  className="absolute h-[400px] w-[400px] rounded-full bg-cyan-400/6 blur-[140px]"
 />
 <motion.div
   style={{
     x: smoothX,
     y: smoothY,
   }}
-  className="absolute h-[500px] w-[500px] rounded-full bg-cyan-400/10 blur-[180px]"
+  className="absolute h-[500px] w-[500px] rounded-full bg-cyan-400/6 blur-[180px]"
 />
 
     </div>
