@@ -209,7 +209,7 @@ const toggleFavorite = async (id: string) => {
     />
     by
     <span className="font-semibold text-cyan-400">
-      Akim
+      PromptForge
     </span>
   </p>
 
