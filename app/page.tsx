@@ -170,7 +170,7 @@ const toggleFavorite = async (id: string) => {
 </a>
 
     <a
-      href="mailto:akim.codes@gmail.com"
+      href="mailto:thepromptforge.ai@gmail.com"
       className="flex items-center gap-2 transition hover:text-cyan-400"
     >
       <Mail size={16} />
